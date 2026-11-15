@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endless Frostbite - Buscaminas Roblox Classic</title>
+    <style>
+        @font-face {
+            font-family: 'RobloxFont';
+            src: local('Tahoma'), local('Arial');
+        }
+
+        body {
+            font-family: 'RobloxFont', Tahoma, Arial, sans-serif;
+            background-color: #0b1a2d; /* Fondo azul oscuro invernal de Roblox 2008-2010 */
+            background-image: linear-gradient(135deg, #0b1a2d 0%, #1e3c72 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+
+        /* Contenedor Principal tipo Ventana / GUI de Roblox Clásico (2009 style) */
+        .roblox-frame {
+            background-color: #e1e1e1;
+            border: 4px solid #666;
+            border-top-color: #fff;
+            border-left-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            width: 360px;
+            color: #000;
+        }
+
+        /* Barra superior tipo CoreGUI de Roblox */
+        .roblox-topbar {
+            background: linear-gradient(to bottom, #2d2d2d, #1a1a1a);
+            color: #ffffff;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #000;
+        }
+
+        .roblox-logo {
+            color: #ff0000;
+            font-weight: 900;
+            margin-right: 6px;
+            text-shadow: 1px 1px 0px #fff;
+        }
+
+        .window-controls span {
+            background: #cc0000;
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            border: 1px solid #fff;
+            cursor: pointer;
+            font-family: monospace;
+        }
+
+        .window-body {
+            padding: 12px;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Panel de Información Estilo Roblox Studio / Tool */
+        .roblox-panel {
+            background-color: #dcdcdc;
+            border: 2px inset #999;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+
+        .stat-box {
+            background: #000;
+            color: #00ffcc; /* Estilo terminal / interfaz de Roblox clásica */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border: 2px inset #444;
+            letter-spacing: 1px;
+        }
+
+        /* Botón de Estado Central Estilo Icono Clásico */
+        .spawn-btn {
+            background: linear-gradient(to bottom, #ffdd44, #ffaa00);
+            border: 2px outset #fff;
+            color: #000;
+            font-weight: bold;
+            font-size: 1.1rem;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+
+        .spawn-btn:active {
+            border-style: inset;
+            background: #cc8800;
+        }
+
+        /* Barra de Herramientas Estilo Backpack / Tools de Roblox */
+        .backpack-bar {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .tool-btn {
+            flex: 1;
+            background: linear-gradient(to bottom, #f0f0f0, #cccccc);
+            border: 2px outset #fff;
+            border-bottom-color: #888;
+            border-right-color: #888;
+            padding: 8px;
+            font-family: 'RobloxFont', Tahoma, sans-serif;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #111;
+        }
+
+        .tool-btn.active {
+            background: linear-gradient(to bottom, #bbb, #ddd);
+            border: 2px inset #666;
+            color: #d00000;
+        }
+
+        /* Tablero Buscaminas Estilo Bloques de Roblox */
+        .roblox-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 40px);
+            grid-template-rows: repeat(7, 40px);
+            gap: 2px;
+            background-color: #999;
+            border: 3px solid #666;
+            padding: 3px;
+        }
+
+        .roblox-cell {
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            border: 2px outset #ffffff;
+            border-bottom-color: #888;
+            border-right-color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #000;
+        }
+
+        .roblox-cell:active {
+            border: 2px inset #666;
+            background: #d0d0d0;
+        }
+
+        .roblox-cell.revealed {
+            background: #cccccc;
+            border: 1px solid #888;
+            border-top: none;
+            border-left: none;
+        }
+
+        /* Colores clásicos vibrantes de texto numerado */
+        .c-1 { color: #0000ff; }
+        .c-2 { color: #008800; }
+        .c-3 { color: #cc0000; }
+        .c-4 { color: #000088; }
+        .c-5 { color: #880000; }
+
+        /* Ventana Emergente / Modal Estilo Badge Earned de Roblox */
+        .roblox-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .badge-popup {
+            background: #e1e1e1;
+            border: 4px solid #333;
+            border-top-color: #fff;
+            border-left-color: #fff;
+            width: 310px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            color: #000;
+        }
+
+        .badge-header {
+            background: linear-gradient(to bottom, #0055ff, #0022aa);
+            color: white;
+            padding: 6px 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .badge-content {
+            padding: 12px;
+            text-align: center;
+        }
+
+        .badge-icon {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            background: #fff;
+            border: 2px inset #666;
+            box-sizing: border-box;
+            font-family: Tahoma;
+            font-size: 0.9rem;
+        }
+
+        .roblox-action-btn {
+            background: linear-gradient(to bottom, #00cc22, #008811);
+            color: white;
+            border: 2px outset #fff;
+            border-bottom-color: #004400;
+            border-right-color: #004400;
+            padding: 8px 14px;
+            font-weight: bold;
+            font-family: Tahoma;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .roblox-action-btn:active {
+            border: 2px inset #003300;
+            background: #006600;
+        }
+
+        .status-text {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="roblox-frame">
+        <div class="roblox-topbar">
+            <div><span class="roblox-logo">R</span>Endless Frostbite - Badge Challenge</div>
+            <div class="window-controls"><span>X</span></div>
+        </div>
+        <div class="window-body">
+            <div class="roblox-panel">
+                <div id="mine-count" class="stat-box">08</div>
+                <div class="spawn-btn" id="faceBtn" onclick="initGame()" title="Reiniciar">😀</div>
+                <div id="timer" class="stat-box">000</div>
+            </div>
+
+            <div class="backpack-bar">
+                <button id="btn-dig" class="tool-btn active" onclick="setMode('dig')">🛠️ Herramienta Pala</button>
+                <button id="btn-flag" class="tool-btn" onclick="setMode('flag')">🚩 Herramienta Bandera</button>
+            </div>
+
+            <div class="roblox-grid" id="grid"></div>
+        </div>
+    </div>
+
+    <!-- Modal Emblema Obtenido -->
+    <div class="roblox-modal" id="winModal">
+        <div class="badge-popup">
+            <div class="badge-header">
+                <span>Badge Awarded!</span>
+                <span>[X]</span>
+            </div>
+            <div class="badge-content">
+                <div class="badge-icon">🏆</div>
+                <p style="margin: 5px 0; font-weight: bold; color: #0033aa;">¡Emblema Desbloqueado!</p>
+                <p style="font-size: 0.85rem; color: #444;">Has superado el desafío clásico de Endless Frostbite.</p>
+                <p style="font-size: 0.8rem; margin-top: 8px;">Ingresa tu nombre de usuario de Roblox:</p>
+                
+                <input type="text" id="robloxUsername" placeholder="Tu username exacto...">
+                <button class="roblox-action-btn" onclick="enviarRecompensa()">Sincronizar y Reclamar</button>
+                <div class="status-text" id="statusMsg"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FIREBASE_URL = "https://endless-1d6d4-default-rtdb.firebaseio.com";
+        const ROWS = 7, COLS = 7, MINES = 8;
+        let board = [], mineCount = MINES, gameOver = false, gameWon = false, firstClick = true, timer = 0, timerInterval = null, currentMode = 'dig';
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('btn-dig').classList.toggle('active', mode === 'dig');
+            document.getElementById('btn-flag').classList.toggle('active', mode === 'flag');
+        }
+
+        function initGame() {
+            gameOver = false; gameWon = false; firstClick = true; mineCount = MINES; timer = 0;
+            clearInterval(timerInterval);
+            document.getElementById('timer').innerText = "000";
+            document.getElementById('mine-count').innerText = "08";
+            document.getElementById('faceBtn').innerText = "😀";
+            document.getElementById('winModal').style.display = 'none';
+            document.getElementById('statusMsg').innerText = "";
+            document.getElementById('robloxUsername').value = "";
+
+            board = [];
+            const gridEl = document.getElementById('grid');
+            gridEl.innerHTML = '';
+
+            for (let r = 0; r < ROWS; r++) {
+                let row = [];
+                for (let c = 0; c < COLS; c++) {
+                    row.push({ r, c, mine: false, revealed: false, flagged: false, neighborMines: 0 });
+                    let cellEl = document.createElement('div');
+                    cellEl.className = 'roblox-cell';
+                    cellEl.id = `cell-${r}-${c}`;
+                    cellEl.addEventListener('click', () => handleCellClick(r, c));
+                    cellEl.addEventListener('contextmenu', (e) => { e.preventDefault(); toggleFlag(r, c); });
+                    gridEl.appendChild(cellEl);
+                }
+                board.push(row);
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timer++;
+                if (timer > 999) timer = 999;
+                document.getElementById('timer').innerText = String(timer).padStart(3, '0');
+            }, 1000);
+        }
+
+        function placeMines(firstR, firstC) {
+            let placed = 0;
+            while (placed < MINES) {
+                let rr = Math.floor(Math.random() * ROWS);
+                let cc = Math.floor(Math.random() * COLS);
+                if (Math.abs(rr - firstR) <= 1 && Math.abs(cc - firstC) <= 1) continue;
+                if (!board[rr][cc].mine) { board[rr][cc].mine = true; placed++; }
+            }
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (board[r][c].mine) continue;
+                    let count = 0;
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            let nr = r + dr, nc = c + dc;
+                            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && board[nr][nc].mine) count++;
+                        }
+                    }
+                    board[r][c].neighborMines = count;
+                }
+            }
+        }
+
+        function handleCellClick(r, c) {
+            if (gameOver || gameWon) return;
+            if (currentMode === 'flag') { toggleFlag(r, c); return; }
+            let cell = board[r][c];
+            if (cell.flagged || cell.revealed) return;
+            if (firstClick) { placeMines(r, c); startTimer(); firstClick = false; }
+            if (cell.mine) {
+                revealAllMines(); gameOver = true; clearInterval(timerInterval);
+                document.getElementById('faceBtn').innerText = "💀";
+                alert("¡Game Over! ¡Te eliminó una mina de Frostbite!");
+                initGame();
+                return;
+            }
+            revealCell(r, c);
+            checkWinCondition();
+        }
+
+        function toggleFlag(r, c) {
+            let cell = board[r][c];
+            if (cell.revealed || gameOver || gameWon) return;
+            cell.flagged = !cell.flagged;
+            let el = document.getElementById(`cell-${r}-${c}`);
+            if (cell.flagged) { el.innerText = "🚩"; mineCount--; }
+            else { el.innerText = ""; mineCount++; }
+            document.getElementById('mine-count').innerText = String(Math.max(0, mineCount)).padStart(2, '0');
+        }
+
+        function revealCell(r, c) {
+            let cell = board[r][c];
+            if (cell.revealed || cell.flagged) return;
+            cell.revealed = true;
+            let el = document.getElementById(`cell-${r}-${c}`);
+            el.classList.add('revealed');
+            if (cell.neighborMines > 0) {
+                el.innerText = cell.neighborMines;
+                el.classList.add(`c-${cell.neighborMines}`);
+            } else {
+                for (let dr = -1; dr <= 1; dr++) {
+                    for (let dc = -1; dc <= 1; dc++) {
+                        let nr = r + dr, nc = c + dc;
+                        if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                            if (!board[nr][nc].revealed) revealCell(nr, nc);
+                        }
+                    }
+                }
+            }
+        }
+
+        function revealAllMines() {
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (board[r][c].mine) document.getElementById(`cell-${r}-${c}`).innerText = "💣";
+                }
+            }
+        }
+
+        function checkWinCondition() {
+            let won = true;
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (!board[r][c].mine && !board[r][c].revealed) { won = false; break; }
+                }
+            }
+            if (won) {
+                gameWon = true; clearInterval(timerInterval);
+                document.getElementById('faceBtn').innerText = "😎";
+                document.getElementById('winModal').style.display = 'flex';
+            }
+        }
+
+        async function enviarRecompensa() {
+            let username = document.getElementById('robloxUsername').value.trim();
+            let statusMsg = document.getElementById('statusMsg');
+            if (!username || username.length < 3) {
+                statusMsg.style.color = "red"; statusMsg.innerText = "Ingresa un usuario válido."; return;
+            }
+            statusMsg.style.color = "blue"; statusMsg.innerText = "Conectando con Firebase...";
+            try {
+                let response = await fetch(`${FIREBASE_URL}/ganadoresweb/${username.toLowerCase()}.json`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ reclamado: false, tiempo: timer, fecha: Date.now() })
+                });
+                if (response.ok) {
+                    statusMsg.style.color = "green"; statusMsg.innerText = "¡Registrado! Ya puedes entrar a Roblox.";
+                    setTimeout(() => initGame(), 3500);
+                } else { throw new Error(); }
+            } catch (err) {
+                statusMsg.style.color = "red"; statusMsg.innerText = "Error al sincronizar datos.";
+            }
+        }
+        initGame();
+    </script>
+</body>
+</html>

@@ -328,7 +328,7 @@
             clearInterval(timerInterval);
             document.getElementById('timer').innerText = "000";
             document.getElementById('mine-count').innerText = "08";
-            document.getElementById('faceBtn').innerText = "😀";
+            document.getElementById('faceBtn').innerText = "💧";
             document.getElementById('winModal').style.display = 'none';
             document.getElementById('statusMsg').innerText = "";
             document.getElementById('robloxUsername').value = "";
@@ -392,7 +392,7 @@
             if (cell.mine) {
                 revealAllMines(); gameOver = true; clearInterval(timerInterval);
                 document.getElementById('faceBtn').innerText = "💀";
-                alert("¡Game Over! ¡Te eliminó una mina de Frostbite!");
+                alert("¡Perdiste! ¡Te eliminó una mina!");
                 initGame();
                 return;
             }
@@ -457,7 +457,7 @@
             let username = document.getElementById('robloxUsername').value.trim();
             let statusMsg = document.getElementById('statusMsg');
             if (!username || username.length < 3) {
-                statusMsg.style.color = "red"; statusMsg.innerText = "Ingresa un usuario válido."; return;
+                statusMsg.style.color = "red"; statusMsg.innerText = "Ingresa un @usuario válido."; return;
             }
             statusMsg.style.color = "blue"; statusMsg.innerText = "Conectando con Firebase...";
             try {
@@ -467,7 +467,7 @@
                     body: JSON.stringify({ reclamado: false, tiempo: timer, fecha: Date.now() })
                 });
                 if (response.ok) {
-                    statusMsg.style.color = "green"; statusMsg.innerText = "¡Registrado! Ya puedes entrar a Roblox.";
+                    statusMsg.style.color = "green"; statusMsg.innerText = "¡Registrado! Ya puedes entrar a reclamar.";
                     setTimeout(() => initGame(), 3500);
                 } else { throw new Error(); }
             } catch (err) {
